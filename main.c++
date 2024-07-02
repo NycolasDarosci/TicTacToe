@@ -140,12 +140,12 @@ int main() {
                 } while (count != 0);
             
                 cout << "Fim do jogo!" << endl;
-
                 break;
+                
             case 'm':
                 cout << "modo 'Desafiar a máquina' escolhido!\n";
-                
                 break;
+
             case 's':
                 cout << "Algoritmo desenvolvido por Nycolas Darosci em 2024, sob a tutoria do professor Eduardo Alves!\n" << endl;
                 system("cls");
@@ -154,7 +154,7 @@ int main() {
     }
     while (opcao != 'f');
     
-    cout << "Você saiu do mastermind.";
+    cout << "Você saiu do tic tac toe!";
 
     return 0;
 }
