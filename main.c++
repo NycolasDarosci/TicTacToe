@@ -1,144 +1,608 @@
 #include <iostream>
-
+#include <time.h>
 
 using namespace std;
 
+// board lines and columns
+const int LINES_NORMAL = 3;
+const int COLUMNS_NORMAL = 3;
+const int LINES_EXPANDED = 6;
+const int COLUMNS_EXPANDED = 6;
+// board
+const char B_NORMAL = 'n';
+const char B_EXPANDED = 'a';
+// symbols
+const char X = 'X';
+const char O = '0';
 
-const int LINHAS = 6;
-
-const int COLUNAS = 6;
-
-
-void imprimir_matriz(int m[LINHAS][COLUNAS],
-                     int qtd_linhas,
-                     int qtd_colunas) {
-
-    for(int i = 0; i < qtd_colunas; i++) {
-        cout << '\t' << i;
+char print_expanded_board(
+    char m[LINES_EXPANDED][COLUMNS_EXPANDED],
+    int lin,
+    int col,
+    char player
+) {
+    system("cls");
+    
+    for (int c = 0; c < COLUMNS_EXPANDED; c++) {
+        cout << '\t' << c ;
     }
-
-    cout << endl;
-
-    for(int l = 0; l < qtd_linhas; l++) {
+    
+    if (lin != 6 && col != 6) {
+        m[lin][col] = player;
+        if (player == X) player = O;
+        else player = X;
+    }
+    
+    cout << "\n";
+    
+    for (int l = 0; l < LINES_EXPANDED; l++) {
         cout << l;
-        for(int c = 0; c < qtd_colunas; c++) {
-            if(m[l][c] == 100) {
-                cout << "\t#";
-            } else {
-                if (m[l][c] == 200) {
-                    cout << "\tX";
-                } else {
-                    cout << '\t' << m[l][c];
-                }
-            }
+        for(int c = 0; c < COLUMNS_EXPANDED; c++) {
+            cout << '\t' << m[l][c];
         }
-        cout << endl;
+        cout << "\n";
     }
-
+    
+    return player;
 }
 
+char print_normal_board(
+    char m[LINES_NORMAL][COLUMNS_NORMAL],
+    int lin,
+    int col,
+    char player
+) {
+    system("cls");
+    
+    for (int c = 0; c < COLUMNS_NORMAL; c++) {
+        cout << '\t' << c ;
+    }
+    
+    if (lin != 3 && col != 3) {
+        m[lin][col] = player;
+        if (player == X) player = O;
+        else player = X;
+    }
+    
+    cout << "\n";
+    
+    for (int l = 0; l < LINES_NORMAL; l++) {
+        cout << l;
+        for(int c = 0; c < COLUMNS_NORMAL; c++) {
+            cout << '\t' << m[l][c];
+        }
+        cout << "\n";
+    }
+    
+    return player;
+}
 
 int main() {
-
-    int m[LINHAS][COLUNAS] = {0};
-
-    int qtd_linhas = 3, qtd_colunas = 3;
-
-
-    srand(time(NULL));
-
-
-    int contador = 1;
-
-    for(int l = 0; l < qtd_linhas; l++) {
-
-        for(int c = 0; c < qtd_colunas; c++) {
-
-            m[l][c] = contador;
-
-            contador++;
-
+    
+    char option;
+    
+    do {
+        cout << "Bem-vindo ao jogo da velha!\nMenu:" << endl;
+        cout << "Jogar 1 contra 1 (j)" << endl;
+        cout << "Desafiar a máquina (m)" << endl;
+        cout << "Sobre (s)" << endl;
+        cout << "Fim (f)" << endl;
+        cout << "Escolha uma opcao: ";
+        cin >> option;
+        cout << "\n";
+        
+        system("cls");
+        
+        if (option == 'j') {
+            cout << "modo '1 contra 1' escolhido!\n";
+            
+            char board, player;
+            int lin, col, count, player_sort;
+            bool tied = true;
+            
+            do {
+                cout << "Digite (n) se deseja jogar no tabuleiro normal.\nDigite (a) se deseja jogar no tabuleiro ampliado.\n"; cin >> board;
+                
+                if (board != B_NORMAL && board != B_EXPANDED) 
+                    cout << "Escolha errada!\n";
+                
+            } while (board != B_NORMAL && board != B_EXPANDED);
+            
+            if (board == B_NORMAL) {
+                cout << "Tabuleiro normal escolhido!\n";
+                
+                system("cls");
+                srand(time(NULL));
+                
+                char m[LINES_NORMAL][COLUMNS_NORMAL] = {
+                    {'-', '-', '-'},
+                    {'-', '-', '-'},
+                    {'-', '-', '-'},
+                };
+                lin = 3; col = 3; count = 9;
+                
+                do {
+                    player_sort = rand() % 3;
+                } while (player_sort == 0);
+                
+                if (player_sort == 1) player = X;
+                else player = O;
+                
+                system("cls");
+                
+                do {
+                    player = print_normal_board(
+                        m, 
+                        lin,
+                        col,
+                        player
+                    );
+                    
+                    // horizontal and vertical
+                    for (int i = 0; i < 3; i++) {
+                        if (
+                            player == X &&
+                            (m[i][0] == X && m[i][1] == X && m[i][2] == X) ||
+                            (m[0][i] == X && m[1][i] == X && m[2][i] == X)   
+                        ) {
+                            cout << "Jogador X venceu!\n";
+                            tied = false;
+                            break;
+                        }
+                        else if (
+                            (m[i][0] == O && m[i][1] == O && m[i][2] == O) ||
+                            (m[0][i] == O && m[1][i] == O && m[2][i] == O)     
+                        ) {
+                            cout << "Jogador 0 venceu!\n";
+                            tied = false;
+                            break;
+                        }
+                    }
+                    // diagonal
+                    if (
+                        (m[0][0] == X && m[1][1] == X && m[2][2] == X) ||
+                        (m[0][2] == X && m[1][1] == X && m[2][0] == X)
+                    ) {
+                        cout << "Jogador X venceu!\n";
+                        tied = false;
+                        break;
+                    }
+                    else if (
+                        (m[0][0] == O && m[1][1] == O && m[2][2] == O) ||
+                        (m[0][2] == O && m[1][1] == O && m[2][0] == O)
+                    ) {
+                        cout << "Jogador 0 venceu!\n";
+                        tied = false;
+                        break;
+                    }
+                    
+                    if (!tied) break;
+                    
+                    cout << "\n";
+                    if (player == X) cout << "Jogador (" << player << ") sua vez\n";
+                    else cout << "Jogador (" << player << ") sua vez\n";
+            
+                    do {
+                        cout << "Digite a linha: "; cin >> lin;
+                        cout << "Digite a coluna: "; cin >> col;
+                        cout << "\n";
+                        
+                        if (lin < 0 || lin > 2 || col < 0 || col > 2) {
+                            cout << "Errado, número fora do tabuleiro! Digite novamente: " << endl;
+                        }
+                        if (m[lin][col] == X || m[lin][col] == O) {
+                        cout << "Posição ocupada! Digite novamente: " << endl; 
+                        }
+                    } while (
+                        (m[lin][col] == X || m[lin][col] == O) ||
+                        (lin < 0 || lin > 2 || col < 0 || col > 2)
+                    );
+                    
+                    count--;
+                    
+                } while (count != 0);
+            
+                if (tied) cout << "Empate!\n";
+                cout << "Fim do jogo!\n";
+                system("cls");
+            }
+            else {
+                cout << "Tabuleiro ampliado escolhido!\n";
+                
+                system("cls");
+                srand(time(NULL));
+                
+                char m[LINES_EXPANDED][COLUMNS_EXPANDED] = {
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'}
+                };
+                lin = 6; col = 6; count = 36;
+                
+                do {
+                    player_sort = rand() % 3;
+                } while (player_sort == 0);
+                
+                if (player_sort == 1) player = X;
+                else player = O;
+                
+                system("cls");
+                
+                do {
+                    player = print_expanded_board(
+                        m, 
+                        lin,
+                        col,
+                        player
+                    );
+                    
+                    // horizontal and vertical
+                    for (int i = 0; i < 6; ++i) {
+                        for (int j = 0; j < 4; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i][j+1] == X && m[i][j+2] == X) ||
+                                (m[j][i] == X && m[j+1][i] == X && m[j+2][i] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i][j+1] == O && m[i][j+2] == O) ||
+                                (m[j][i] == O && m[j+1][i] == O && m[j+2][i] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Diagonal
+                    for (int i = 0; i < 4; ++i) {
+                        for (int j = 0; j < 4; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i+1][j+1] == X && m[i+2][j+2] == X) ||
+                                (m[i+2][j] == X && m[i+1][j+1] == X && m[i][j+2] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i+1][j+1] == O && m[i+2][j+2] == O) ||
+                                (m[i+2][j] == O && m[i+1][j+1] == O && m[i][j+2] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Anti diagonal
+                    for (int i = 0; i < 4; ++i) {
+                        for (int j = 2; j < 6; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i+1][j-1] == X && m[i+2][j-2] == X) ||
+                                (m[i+2][j] == X && m[i+1][j-1] == X && m[i][j-2] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i+1][j-1] == O && m[i+2][j-2] == O) ||
+                                (m[i+2][j] == O && m[i+1][j-1] == O && m[i][j-2] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!tied) break;
+                    
+                    cout << "\n";
+                    if (player == X) cout << "Jogador (" << player << ") sua vez\n";
+                    else cout << "Jogador (" << player << ") sua vez\n";
+            
+                    do {
+                        cout << "Digite a linha: "; cin >> lin;
+                        cout << "Digite a coluna: "; cin >> col;
+                        cout << "\n";
+                        
+                        if (lin < 0 || lin > 5 || col < 0 || col > 5) {
+                            cout << "Errado, número fora do tabuleiro! Digite novamente: " << endl;
+                        }
+                        if (m[lin][col] == X || m[lin][col] == O) {
+                        cout << "Posição ocupada! Digite novamente: " << endl; 
+                        }
+                    } while (
+                        (m[lin][col] == X || m[lin][col] == O) ||
+                        (lin < 0 || lin > 5 || col < 0 || col > 5)
+                    );
+                    
+                    count--;
+                    
+                } while (count != 0);
+            
+                if (tied) cout << "Empate!\n";
+                cout << "Fim do jogo!\n";
+                system("cls");
+                
+            }
         }
-
-    }
-
-
-    // Imprimindo a matriz
-
-    cout << "Primeira vez!" << endl;
-
-    imprimir_matriz(m,qtd_linhas,qtd_colunas);
-
-    cout << "Segunda vez!" << endl;
-
-    //imprimir_matriz(m,3,3);
-
-
-    int escolha_jogador1 = 6 - 1; // Como as células começam com o número 1 (na linha 0 coluna 0), esse menos 1 é necessário em relação ao valor escolhido pelo usuário, nesse caso 6, que deve ser traduzido para a linha 1 coluna 2.
-
-    m[0][2] = 100; // Atribuição em uma casa específica para o jogador 1 (representado pelo número 100). Representa marcar X na posição escolhida.
-
-    m[2][1] = 200; // Atribuição em uma casa específica para o jogador 2 (representado pelo0 número 200). Representa marcar # na posição escolhida.
-
-
-    imprimir_matriz(m,qtd_linhas,qtd_colunas);
-
-
-    int linha = escolha_jogador1 / qtd_colunas;
-
-    int coluna = escolha_jogador1 % qtd_colunas;
-
-    cout << endl << linha << " - " << coluna << endl;
-
-
-    if(m[linha][coluna] < 1 || m[linha][coluna] > 36) {
-
-        cout << "Errado, número fora do tabuleiro!";
-
-    } else {
-
-        if(m[linha][coluna] == 100 || m[linha][coluna] == 200) {
-
-            cout << "Posição ocupada";
-
-        } else {
-
-            cout << "Livre";
-
+        else if (option == 'm') {
+            cout << "modo 'Desafiar a máquina' escolhido!\n";
+            
+            char board, player, machine = O;
+            int lin = 3, col = 3, count = 9, player_sort;
+            bool tied = true;
+            
+            do {
+                cout << "Digite (n) se deseja jogar no tabuleiro normal.\nDigite (a) se deseja jogar no tabuleiro ampliado.\n"; cin >> board;
+                
+                if (board != B_NORMAL && board != B_EXPANDED) 
+                    cout << "Escolha errada!\n";
+                
+            } while (board != B_NORMAL && board != B_EXPANDED);
+            
+            if (board == B_NORMAL) {
+                cout << "Tabuleiro normal escolhido!\n";
+                
+                system("cls");
+                srand(time(NULL));
+                
+                char m[LINES_NORMAL][COLUMNS_NORMAL] = {
+                    {'-', '-', '-'},
+                    {'-', '-', '-'},
+                    {'-', '-', '-'},
+                };
+                
+                do {
+                    player_sort = rand() % 3;
+                } while (player_sort == 0);
+                    
+                if (player_sort == 1) player = X;
+                else player = O;
+                
+                system("cls");
+                
+                do {
+                    player = print_normal_board(
+                        m, 
+                        lin,
+                        col,
+                        player
+                    );
+                    
+                    // horizontal and vertical
+                    for (int i = 0; i < 3; i++) {
+                        if (
+                            player == X &&
+                            (m[i][0] == X && m[i][1] == X && m[i][2] == X) ||
+                            (m[0][i] == X && m[1][i] == X && m[2][i] == X)   
+                        ) {
+                            cout << "Jogador X venceu!\n";
+                            tied = false;
+                            break;
+                        }
+                        else if (
+                            (m[i][0] == O && m[i][1] == O && m[i][2] == O) ||
+                            (m[0][i] == O && m[1][i] == O && m[2][i] == O)     
+                        ) {
+                            cout << "Jogador 0 venceu!\n";
+                            tied = false;
+                            break;
+                        }
+                    }
+                    // diagonal
+                    if (
+                        (m[0][0] == X && m[1][1] == X && m[2][2] == X) ||
+                        (m[0][2] == X && m[1][1] == X && m[2][0] == X)
+                    ) {
+                        cout << "Jogador X venceu!\n";
+                        tied = false;
+                        break;
+                    }
+                    else if (
+                        (m[0][0] == O && m[1][1] == O && m[2][2] == O) ||
+                        (m[0][2] == O && m[1][1] == O && m[2][0] == O)
+                    ) {
+                        cout << "Jogador 0 venceu!\n";
+                        tied = false;
+                        break;
+                    }
+                    
+                    if (!tied) break;
+                    
+                    cout << "\n";
+                    if (player == X) cout << "Jogador (X) sua vez\n";
+            
+                    do {
+                        if (machine == player) {
+                            lin = rand() % 3;
+                            col = rand() % 3;
+                        } else {
+                            cout << "Digite a linha: "; cin >> lin;
+                            cout << "Digite a coluna: "; cin >> col;
+                            cout << "\n";
+                            
+                            if (lin < 0 || lin > 2 || col < 0 || col > 2) {
+                                cout << "Errado, número fora do tabuleiro! Digite novamente: " << endl;
+                            }
+                            if (m[lin][col] == X || m[lin][col] == O) {
+                                cout << "Posição ocupada! Digite novamente: " << endl; 
+                            }
+                        }
+                        
+                    } while (
+                        (m[lin][col] == X || m[lin][col] == O) ||
+                        (lin < 0 || lin > 2 || col < 0 || col > 2)
+                    );
+                    
+                    count--;
+                    
+                } while (count != 0);
+            
+                if (tied) cout << "Empate!\n";
+                cout << "Fim do jogo!\n";
+                system("cls");
+            }
+            else {
+                cout << "Tabuleiro ampliado escolhido!\n";
+                
+                system("cls");
+                srand(time(NULL));
+                
+                char m[LINES_EXPANDED][COLUMNS_EXPANDED] = {
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'},
+                    {'-', '-', '-', '-', '-', '-'}
+                };
+                lin = 6; col = 6; count = 36;
+                
+                do {
+                    player_sort = rand() % 3;
+                } while (player_sort == 0);
+                
+                if (player_sort == 1) player = X;
+                else player = O;
+                
+                system("cls");
+                
+                do {
+                    player = print_expanded_board(
+                        m, 
+                        lin,
+                        col,
+                        player
+                    );
+                    
+                    // horizontal and vertical
+                    for (int i = 0; i < 6; ++i) {
+                        for (int j = 0; j < 4; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i][j+1] == X && m[i][j+2] == X) ||
+                                (m[j][i] == X && m[j+1][i] == X && m[j+2][i] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i][j+1] == O && m[i][j+2] == O) ||
+                                (m[j][i] == O && m[j+1][i] == O && m[j+2][i] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Diagonal
+                    for (int i = 0; i < 4; ++i) {
+                        for (int j = 0; j < 4; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i+1][j+1] == X && m[i+2][j+2] == X) ||
+                                (m[i+2][j] == X && m[i+1][j+1] == X && m[i][j+2] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i+1][j+1] == O && m[i+2][j+2] == O) ||
+                                (m[i+2][j] == O && m[i+1][j+1] == O && m[i][j+2] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Anti diagonal
+                    for (int i = 0; i < 4; ++i) {
+                        for (int j = 2; j < 6; ++j) {
+                            if (
+                                player == X &&
+                                (m[i][j] == X && m[i+1][j-1] == X && m[i+2][j-2] == X) ||
+                                (m[i+2][j] == X && m[i+1][j-1] == X && m[i][j-2] == X)
+                            ) {
+                                cout << "Jogador X venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                            else if (
+                                (m[i][j] == O && m[i+1][j-1] == O && m[i+2][j-2] == O) ||
+                                (m[i+2][j] == O && m[i+1][j-1] == O && m[i][j-2] == O)
+                            ) {
+                                cout << "Jogador 0 venceu!\n";
+                                tied = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!tied) break;
+                    
+                    cout << "\n";
+                    if (player == X) cout << "Jogador (X) sua vez\n";
+            
+                    do {
+                        if (machine == player) {
+                            lin = rand() % 6;
+                            col = rand() % 6;
+                        } else {
+                            cout << "Digite a linha: "; cin >> lin;
+                            cout << "Digite a coluna: "; cin >> col;
+                            cout << "\n";
+                            
+                            if (lin < 0 || lin > 5 || col < 0 || col > 5) {
+                                cout << "Errado, número fora do tabuleiro! Digite novamente: " << endl;
+                            }
+                            if (m[lin][col] == X || m[lin][col] == O) {
+                                cout << "Posição ocupada! Digite novamente: " << endl;
+                            }
+                        }
+                    } while (
+                        (m[lin][col] == X || m[lin][col] == O) ||
+                        (lin < 0 || lin > 5 || col < 0 || col > 5)
+                    );
+                    
+                    count--;
+                    
+                } while (count != 0);
+            
+                if (tied) cout << "Empate!\n";
+                cout << "Fim do jogo!\n";
+                system("cls");
+            }
+            
+        }        
+        else if (option == 's') {
+            cout << "Algoritmo desenvolvido por Nycolas Darosci em 2024, sob a tutoria do professor Eduardo Alves!\n" << endl;
+            system("cls");
         }
-
     }
-
-
-/*
-
-    for(int i = 0; i < qtd_linhas * qtd_colunas; i++) {
-
-//        if( i % qtd_colunas == 0 ) {
-
-//            cout << '\n';
-
-//        }
-
-        int linha_calculada = i / qtd_colunas;
-
-        int coluna_calculada = i % qtd_colunas;
-
-
-        cout << "Linha calculada : " << linha_calculada
-
-             << " - Coluna caculada: " << coluna_calculada
-
-             << " - valor da celula: "
-
-             << m[ linha_calculada ][ coluna_calculada ] << endl;
-
-//        cout <<  << '\t';
-
-    }
-
-*/
+    while (option != 'f');
+    
+    cout << "Você saiu do jogo da velha!";
 
     return 0;
-
 }
