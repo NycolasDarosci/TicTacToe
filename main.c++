@@ -3,24 +3,20 @@
 
 using namespace std;
 
-const int LINHAS = 6;
-const int COLUNAS = 6;
-
+const int LINES = 3;
+const int COLUMNS = 3;
 const char X = 'X';
 const char O = '0';
 
-
 char print(
     char m[LINES][COLUMNS],
-    int qtd_lines,
-    int qtd_columns,
     int lin,
     int col,
     char player
 ) {
     system("cls");
     
-    for (int c = 0; c < qtd_columns; c++) {
+    for (int c = 0; c < COLUMNS; c++) {
         cout << '\t' << c ;
     }
     
@@ -32,9 +28,9 @@ char print(
     
     cout << "\n";
     
-    for (int l = 0; l < qtd_columns; l++) {
+    for (int l = 0; l < LINES; l++) {
         cout << l;
-        for(int c = 0; c < qtd_columns; c++) {
+        for(int c = 0; c < COLUMNS; c++) {
             cout << '\t' << m[l][c];
         }
         cout << "\n";
@@ -62,35 +58,63 @@ int main() {
         
         switch(opcao) {
             case 'j':
-                int qtd_lines = 3, qtd_columns = 3,
-                    lin = 10, col = 10,
-                    count = 9;
-    
-                char player;
+                cout << "modo '1 contra 1' escolhido!\n";
+
+                int lin = 10, col = 10, count = 9;
+                char player, m[LINES][COLUMNS] = {
+                    {'.', '.', '.'},
+                    {'.', '.', '.'},
+                    {'.', '.', '.'},
+                };
                 
                 do {
                     cout << "Escolha X ou 0 para começar: "; cin >> player; cout << "\n";
                     if (player != X && player != O) cout << "Incorreto, digite novamente!\n";
                 } while (player != X && player != O);
                 
-                
-                char m[LINES][COLUMNS] = {
-                    {'.', '.', '.'},
-                    {'.', '.', '.'},
-                    {'.', '.', '.'},
-                };
-                
-                srand(time(NULL));
+                system("cls");
+                //srand(time(NULL));
                 
                 do {
                     player = print(
                         m, 
-                        qtd_lines, 
-                        qtd_columns,
                         lin,
                         col,
                         player
                     );
+                    
+                    if (
+                        player == X &&
+                        //horizontal X
+                        (m[0][0] == X && m[0][1] == X && m[0][2] == X) ||
+                        (m[1][0] == X && m[1][1] == X && m[1][2] == X) ||
+                        (m[2][0] == X && m[2][1] == X && m[2][2] == X) ||
+                        //vertical X
+                        (m[0][0] == X && m[1][0] == X && m[2][0] == X) ||
+                        (m[0][1] == X && m[1][1] == X && m[2][1] == X) ||
+                        (m[0][2] == X && m[1][2] == X && m[2][2] == X) ||
+                        //diagonal X
+                        (m[0][0] == X && m[1][1] == X && m[2][2] == X) ||
+                        (m[0][2] == X && m[1][1] == X && m[2][0] == X)
+                    ) {
+                        cout << "Jogador X venceu!\n";
+                        break;
+                    } else if (
+                        //horizontal 0
+                        (m[0][0] == O && m[0][1] == O && m[0][2] == O) ||
+                        (m[1][0] == O && m[1][1] == O && m[1][2] == O) ||
+                        (m[2][0] == O && m[2][1] == O && m[2][2] == O) ||
+                        //vertical 0
+                        (m[0][0] == O && m[1][0] == O && m[2][0] == O) ||
+                        (m[0][1] == O && m[1][1] == O && m[2][1] == O) ||
+                        (m[0][2] == O && m[1][2] == O && m[2][2] == O) ||
+                        //diagonal 0
+                        (m[0][0] == O && m[1][1] == O && m[2][2] == O) ||
+                        (m[0][2] == O && m[1][1] == O && m[2][0] == O)
+                    ) {
+                        cout << "Jogador 0 venceu!\n";
+                        break;
+                    }
                     
                     if (player == X) cout << "Jogador (" << player << ") sua vez\n";
                     else cout << "Jogador (" << player << ") sua vez\n";
@@ -110,22 +134,10 @@ int main() {
                         (m[lin][col] == X || m[lin][col] == O) ||
                         (lin < 0 || lin > 2 || col < 0 || col > 2)
                     );
+                    
                     count--;
-                } while (
-                    count != 0 ||
-                    //horizontal
-                    // testando essas condicoes
-                    (m[0][0] != '.' && m[0][1] != '.' && m[0][2] != '.') &&
-                    (m[1][0] != '.' && m[1][1] != '.' && m[1][2] != '.') &&
-                    (m[2][0] != '.' && m[2][1] != '.' && m[2][2] != '.') &&
-                    //vertical
-                    (m[0][0] != '.' && m[1][0] != '.' && m[2][0] != '.') &&
-                    (m[0][1] != '.' && m[1][1] != '.' && m[2][1] != '.') &&
-                    (m[0][2] != '.' && m[1][2] != '.' && m[2][2] != '.') &&
-                    //diagonal
-                    (m[0][0] != '.' && m[1][1] != '.' && m[2][2] != '.') &&
-                    (m[0][2] != '.' && m[1][1] != '.' && m[2][0] != '.')
-                );
+                    
+                } while (count != 0);
             
                 cout << "Fim do jogo!" << endl;
 
