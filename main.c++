@@ -68,6 +68,7 @@ int main() {
                 srand(time(NULL));
                 
                 do {
+         
                     imprimir_matriz(
                         m, 
                         qtd_linhas, 
@@ -75,33 +76,38 @@ int main() {
                         lin,
                         col
                     );
+
+                    do {
+                        cin >> lin;
+                        cin >> col;
+
+                        if (lin < 0 || lin > 2 || col < 0 || col > 2) {
+                            cout << "Errado, número fora do tabuleiro! Digite novamente: " << endl;
+                        }
+                        if (m[lin][col] != '.') {
+                        cout << "Posição ocupada! Digite novamente: " << endl; 
+                        }
+                    } while (
+                        m[lin][col] != '.' ||
+                        (lin < 0 || lin > 2 || col < 0 || col > 2)
+                    );
                     
-                    cout << m[0][0] << " " << m[0][1] << " " <<  m[0][2] << endl;
-                    
-                    m[2][0] = 'O';
-                    m[2][1] = 'O';
-                    m[2][2] = 'O';
-                    
-                    cin >> lin;
-                    cin >> col;
-                    
-                    //tentativas--;
+                    tentativas--;
                     cout << "tentativas: " << tentativas << endl;
-                    if (tentativas == 0) cout << "Partida encerrada!" << endl;
+
                 } while (
-                    //horizontal
-                    (m[0][0] != '.' && m[0][1] != '.' && m[0][2] != '.') ||
-                    (m[1][0] != '.' && m[1][1] != '.' && m[1][2] != '.') ||
-                    (m[2][0] != '.' && m[2][1] != '.' && m[2][2] != '.') ||
-                    //vertical
-                    (m[0][0] != '.' && m[1][0] != '.' && m[2][0] != '.') ||
-                    (m[0][1] != '.' && m[1][1] != '.' && m[2][1] != '.') ||
-                    (m[0][2] != '.' && m[1][2] != '.' && m[2][2] != '.') ||
-                    //diagonal
-                    (m[0][0] != '.' && m[1][1] != '.' && m[2][2] != '.') ||
-                    (m[0][2] != '.' && m[1][1] != '.' && m[2][0] != '.') ||
-                    
                     tentativas != 0
+                    //horizontal
+                    // (m[0][0] == '.' && m[0][1] == '.' && m[0][2] == '.') ||
+                    // (m[1][0] == '.' && m[1][1] == '.' && m[1][2] == '.') ||
+                    // (m[2][0] == '.' && m[2][1] == '.' && m[2][2] == '.') ||
+                    // //vertical
+                    // (m[0][0] == '.' && m[1][0] == '.' && m[2][0] == '.') ||
+                    // (m[0][1] == '.' && m[1][1] == '.' && m[2][1] == '.') ||
+                    // (m[0][2] == '.' && m[1][2] == '.' && m[2][2] == '.') ||
+                    //  //diagonal
+                    // (m[0][0] == '.' && m[1][1] == '.' && m[2][2] == '.') ||
+                    // (m[0][2] == '.' && m[1][1] == '.' && m[2][0] == '.')
                 );
             
                 cout << "Fim do jogo!" << endl;
