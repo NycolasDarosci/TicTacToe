@@ -1,2 +1,2 @@
-##TO DO 
-###machine algorithm intelligence
+TO DO 
+machine algorithm intelligence
